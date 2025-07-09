@@ -1,18 +1,50 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Bind resources to your worker in `wrangler.jsonc`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { createJimp } from "@jimp/core";
+import { Bitmap, defaultFormats, defaultPlugins } from "jimp";
+import webp from "@jimp/wasm-webp";
+import avif from "@jimp/wasm-avif"
+
+// A custom jimp that supports webp
+const Jimp = createJimp({
+  formats: [...defaultFormats, webp, avif],
+  plugins: defaultPlugins,
+});
+
+type DigiImage = {
+	width: number;
+	height: number;
+
+	/** BGR format */
+	pixels: number[]
+}
+
+const B = 1
+const G = 256
+const R = 256 * 256
+
+
+function toDigi(bmp: Bitmap): DigiImage {
+	let pixels: number[] = [];
+
+	for (let i = 0; i < bmp.data.length; i += 4) {
+		pixels.push( 
+			bmp.data[i] * R + 
+			bmp.data[i + 1] * G + 
+			bmp.data[i + 2] * B 
+		)
+	}
+	
+	return {
+		width: bmp.width,
+		height: bmp.height,
+		pixels
+	}
+}
 
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello World!');
+	async fetch(): Promise<Response> {
+		const image = await Jimp.read("https://cataas.com/cat");
+		image.scaleToFit({w: 256, h: 256})
+
+		return new Response( JSON.stringify( toDigi(image.bitmap) ) );
 	},
 } satisfies ExportedHandler<Env>;

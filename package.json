@@ -12,5 +12,11 @@
 		"typescript": "^5.5.2",
 		"wrangler": "^4.24.0"
 	},
-	"dependencies": {}
+	"dependencies": {
+		"@jimp/core": "^1.6.0",
+		"@jimp/wasm-avif": "^1.6.0",
+		"@jimp/wasm-webp": "^1.6.0",
+		"@types/jimp": "^0.2.1",
+		"jimp": "^1.6.0"
+	}
 }
