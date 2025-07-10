@@ -13,7 +13,7 @@ type DigiImage = {
 	width: number;
 	height: number;
 
-	/** BGR format, arrays of size 15k */
+	/** BGR format, 2d array */
 	pixels: number[][]
 }
 
@@ -28,7 +28,7 @@ function toDigi(bmp: Bitmap): DigiImage {
 	let buffer: number[] = []
 
 	for (let i = 0; i < bmp.data.length; i += 4) {
-		if( buffer.length > 15000 ){ // cuz JSONToTable sucks!
+		if( buffer.length >= bmp.width ){ // cuz JSONToTable sucks!
 			pixels.push(buffer); buffer = [] 
 		}
 		buffer.push( 
