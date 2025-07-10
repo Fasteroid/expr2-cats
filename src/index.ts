@@ -14,7 +14,7 @@ type DigiImage = {
 	height: number;
 
 	/** BGR format, 2d array */
-	pixels: number[][]
+	rows: string[]
 }
 
 const B = 1
@@ -23,8 +23,8 @@ const R = 256 * 256
 
 
 function toDigi(bmp: Bitmap): DigiImage {
-	let pixels: number[][] = [];
 
+	let rows:   string[] = [];
 	let buffer: number[] = []
 
 	for (let i = 0; i < bmp.data.length; i += 4) {
@@ -38,12 +38,12 @@ function toDigi(bmp: Bitmap): DigiImage {
 		)
 	}
 
-	pixels.push(buffer);
+	rows.push( JSON.stringify(buffer) );
 	
 	return {
 		width: bmp.width,
 		height: bmp.height,
-		pixels
+		rows
 	}
 }
 
