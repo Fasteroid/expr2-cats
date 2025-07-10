@@ -3,7 +3,7 @@ import { Bitmap, defaultFormats, defaultPlugins } from "jimp";
 import webp from "@jimp/wasm-webp";
 import avif from "@jimp/wasm-avif"
 
-// A custom jimp that supports webp
+// SUPPORT ALL THE FORMATS
 const Jimp = createJimp({
   formats: [...defaultFormats, webp, avif],
   plugins: defaultPlugins,
@@ -13,8 +13,8 @@ type DigiImage = {
 	width: number;
 	height: number;
 
-	/** BGR format */
-	pixels: number[]
+	/** BGR format, arrays of size 15k */
+	pixels: number[][]
 }
 
 const B = 1
@@ -23,15 +23,22 @@ const R = 256 * 256
 
 
 function toDigi(bmp: Bitmap): DigiImage {
-	let pixels: number[] = [];
+	let pixels: number[][] = [];
+
+	let buffer: number[] = []
 
 	for (let i = 0; i < bmp.data.length; i += 4) {
-		pixels.push( 
+		if( buffer.length > 15000 ){ // cuz JSONToTable sucks!
+			pixels.push(buffer); buffer = [] 
+		}
+		buffer.push( 
 			bmp.data[i] * R + 
 			bmp.data[i + 1] * G + 
 			bmp.data[i + 2] * B 
 		)
 	}
+
+	pixels.push(buffer);
 	
 	return {
 		width: bmp.width,
