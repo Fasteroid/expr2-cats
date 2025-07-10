@@ -24,7 +24,7 @@ function toDigi(bmp: Bitmap): string {
 		)
 	}
 	
-	return [bmp.width, bmp.height, ...pixels].map( px => px.toString(16) ).join(",")
+	return '0000' + [bmp.width, bmp.height, ...pixels].map( px => px.toString(16) ).join(",")
 }
 
 // w,h,pixels...
